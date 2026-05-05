@@ -18,12 +18,19 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+            archive_ext: tar.gz
           - os: ubuntu-24.04-arm
             target: aarch64-unknown-linux-gnu
+            archive_ext: tar.gz
           - os: macos-13
             target: x86_64-apple-darwin
+            archive_ext: tar.gz
           - os: macos-14
             target: aarch64-apple-darwin
+            archive_ext: tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            archive_ext: zip
 
     steps:
       - name: Checkout
@@ -44,9 +51,12 @@ jobs:
         shell: bash
         run: |
           version="${GITHUB_REF_NAME}"
-          binary="target/${{ matrix.target }}/release/openfish"
-          archive="openfish-${version}-${{ matrix.target }}.tar.gz"
-          tar -czf "$archive" -C "$(dirname "$binary")" openfish
+          archive="openfish-${version}-${{ matrix.target }}.${{ matrix.archive_ext }}"
+          if [ "${{ matrix.target }}" = "x86_64-pc-windows-msvc" ]; then
+            powershell -NoProfile -Command "Compress-Archive -Path 'target/${{ matrix.target }}/release/openfish.exe' -DestinationPath '$archive' -Force"
+          else
+            tar -czf "$archive" -C "target/${{ matrix.target }}/release" openfish
+          fi
           shasum -a 256 "$archive" > "${archive}.sha256"
 
       - name: Upload artifact
@@ -54,8 +64,8 @@ jobs:
         with:
           name: openfish-${{ matrix.target }}
           path: |
-            openfish-${{ github.ref_name }}-${{ matrix.target }}.tar.gz
-            openfish-${{ github.ref_name }}-${{ matrix.target }}.tar.gz.sha256
+            openfish-${{ github.ref_name }}-${{ matrix.target }}.${{ matrix.archive_ext }}
+            openfish-${{ github.ref_name }}-${{ matrix.target }}.${{ matrix.archive_ext }}.sha256
 
   publish:
     name: Publish GitHub release
@@ -78,4 +88,5 @@ jobs:
         with:
           files: |
             dist/*.tar.gz
+            dist/*.zip
             dist/checksums.txt
