@@ -10,9 +10,26 @@ OpenClaw-generated trading agents.
 
 ## Install
 
+### Supported Platforms
+
+Source install works on any platform where the Rust toolchain and Openfish
+dependencies build.
+
+Release binaries are published for:
+
+- Linux x86_64: `x86_64-unknown-linux-gnu`
+- Linux ARM64: `aarch64-unknown-linux-gnu`
+- macOS Intel: `x86_64-apple-darwin`
+- macOS Apple Silicon: `aarch64-apple-darwin`
+- Windows x86_64: `x86_64-pc-windows-msvc`
+
+The initial `v0.1.4` release does not include Windows binaries. Windows release
+artifacts start with `v0.1.5` or later.
+
 ### Build from source
 
-Before the first public binary release, source install is the supported path.
+Source install is always available and is the best path before a matching
+binary release is published for your platform.
 
 ```bash
 git clone https://github.com/billcheung10/openfish-cli
@@ -22,7 +39,7 @@ cargo install --path openfish-cli
 
 ### Shell script
 
-Available after the first public release artifacts are published:
+Installs the latest published release binary:
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/billcheung10/openfish-cli/main/openfish-cli/install.sh | sh
@@ -30,12 +47,64 @@ curl -sSL https://raw.githubusercontent.com/billcheung10/openfish-cli/main/openf
 
 ### Homebrew
 
-Available after release checksums are published:
+Available after release checksums are published for the latest release:
 
 ```bash
 brew tap billcheung10/openfish-cli https://github.com/billcheung10/openfish-cli
 brew install openfish
 ```
+
+### Windows
+
+Native Windows binaries are published as `.zip` archives on GitHub Releases
+starting with `v0.1.5` or later. Until then, Windows users should use WSL or
+build from source:
+
+```powershell
+git clone https://github.com/billcheung10/openfish-cli
+cd openfish-cli
+cargo install --path openfish-cli
+```
+
+## Update
+
+If you installed a release binary, use:
+
+```bash
+openfish upgrade
+```
+
+`openfish upgrade` requires a published GitHub Release with a matching binary
+and checksum for your platform.
+
+If you installed from source, update from the repository:
+
+```bash
+cd openfish-cli
+git pull
+cargo install --path openfish-cli --force
+```
+
+## Uninstall
+
+If installed with Cargo:
+
+```bash
+cargo uninstall openfish-cli
+```
+
+If installed from a release archive or shell installer, remove the installed
+`openfish` binary from your `PATH`. On many macOS and Linux systems this is:
+
+```bash
+rm /usr/local/bin/openfish
+```
+
+On Windows, remove the directory containing `openfish.exe` from `PATH`.
+
+Uninstalling the binary does not delete local wallet or API configuration. Only
+remove the Openfish config directory if you intentionally want to wipe local
+credentials and settings.
 
 ## Quick Start
 
