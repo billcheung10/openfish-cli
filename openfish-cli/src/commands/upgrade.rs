@@ -4,7 +4,7 @@ use std::process::Command;
 
 use anyhow::{Context, bail};
 
-const REPO: &str = "Openfish/openfish-cli";
+const REPO: &str = "billcheung10/openfish-cli";
 const BINARY: &str = "openfish";
 
 pub fn execute() -> anyhow::Result<()> {

@@ -9,7 +9,7 @@ Rust CLI for Openfish. Browse markets, place orders, manage positions, and inter
 ### Build from source
 
 ```bash
-git clone https://github.com/Openfish/openfish-cli
+git clone https://github.com/billcheung10/openfish-cli
 cd openfish-cli
 cargo install --path openfish-cli
 ```
@@ -19,7 +19,7 @@ cargo install --path openfish-cli
 Available after the first public binary release:
 
 ```bash
-brew tap Openfish/openfish-cli https://github.com/Openfish/openfish-cli
+brew tap billcheung10/openfish-cli https://github.com/billcheung10/openfish-cli
 brew install openfish
 ```
 
@@ -28,7 +28,7 @@ brew install openfish
 Available after the first public binary release:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/Openfish/openfish-cli/main/install.sh | sh
+curl -sSL https://raw.githubusercontent.com/billcheung10/openfish-cli/main/openfish-cli/install.sh | sh
 ```
 
 ## Quick Start

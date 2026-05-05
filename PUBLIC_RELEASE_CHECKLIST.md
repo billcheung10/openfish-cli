@@ -37,7 +37,7 @@ The public CLI must support non-interactive agent use:
 
 ## First Public Repo Tasks
 
-- Create `Openfish/openfish-cli` as a public repository.
+- Create `billcheung10/openfish-cli` as a public repository.
 - Push this directory as repository root, not as a subdirectory.
 - Enable GitHub Actions.
 - Tag the first release only after `cargo test --workspace --locked` passes.

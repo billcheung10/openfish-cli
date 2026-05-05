@@ -5,7 +5,7 @@ edition = "2024"
 rust-version = "1.88.0"
 description = "CLI for Openfish — browse markets, trade, and manage positions"
 license = "MIT"
-repository = "https://github.com/Openfish/openfish-cli"
+repository = "https://github.com/billcheung10/openfish-cli"
 keywords = ["openfish", "prediction-markets", "trading", "cli"]
 categories = ["command-line-utilities"]
 

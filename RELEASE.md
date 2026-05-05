@@ -1,7 +1,7 @@
 # Release Process
 
 This directory is designed to be published as the root of the public
-`Openfish/openfish-cli` repository.
+`billcheung10/openfish-cli` repository.
 
 ## Preflight
 
@@ -40,7 +40,7 @@ cargo install --path openfish-cli
 After release artifacts exist, users can install with:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/Openfish/openfish-cli/main/openfish-cli/install.sh | sh
+curl -sSL https://raw.githubusercontent.com/billcheung10/openfish-cli/main/openfish-cli/install.sh | sh
 ```
 
 Homebrew formula checksums must be updated from the release artifacts before

@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-REPO="Openfish/openfish-cli"
+REPO="billcheung10/openfish-cli"
 BINARY="openfish"
 INSTALL_DIR="/usr/local/bin"
 

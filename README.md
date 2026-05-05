@@ -15,7 +15,7 @@ OpenClaw-generated trading agents.
 Before the first public binary release, source install is the supported path.
 
 ```bash
-git clone https://github.com/Openfish/openfish-cli
+git clone https://github.com/billcheung10/openfish-cli
 cd openfish-cli
 cargo install --path openfish-cli
 ```
@@ -25,7 +25,7 @@ cargo install --path openfish-cli
 Available after the first public release artifacts are published:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/Openfish/openfish-cli/main/openfish-cli/install.sh | sh
+curl -sSL https://raw.githubusercontent.com/billcheung10/openfish-cli/main/openfish-cli/install.sh | sh
 ```
 
 ### Homebrew
@@ -33,7 +33,7 @@ curl -sSL https://raw.githubusercontent.com/Openfish/openfish-cli/main/openfish-
 Available after release checksums are published:
 
 ```bash
-brew tap Openfish/openfish-cli https://github.com/Openfish/openfish-cli
+brew tap billcheung10/openfish-cli https://github.com/billcheung10/openfish-cli
 brew install openfish
 ```
 

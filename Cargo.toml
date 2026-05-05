@@ -9,7 +9,7 @@ resolver = "3"
 edition = "2024"
 rust-version = "1.88.0"
 license = "MIT"
-repository = "https://github.com/Openfish/openfish-cli"
+repository = "https://github.com/billcheung10/openfish-cli"
 
 [profile.release]
 lto = "thin"
