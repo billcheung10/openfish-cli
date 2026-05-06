@@ -23,8 +23,8 @@ Release binaries are published for:
 - macOS Apple Silicon: `aarch64-apple-darwin`
 - Windows x86_64: `x86_64-pc-windows-msvc`
 
-The initial `v0.1.4` release does not include Windows binaries. Windows release
-artifacts start with the first successful release after `v0.1.4`.
+Windows binaries are published as `.zip` archives. Unix-like platforms are
+published as `.tar.gz` archives.
 
 ### Build from source
 
@@ -56,9 +56,8 @@ brew install openfish
 
 ### Windows
 
-Native Windows binaries are published as `.zip` archives on GitHub Releases
-starting with the first successful release after `v0.1.4`. Until then, Windows
-users should use WSL or build from source:
+Native Windows binaries are published as `.zip` archives on GitHub Releases.
+You can also build from source:
 
 ```powershell
 git clone https://github.com/billcheung10/openfish-cli
@@ -122,14 +121,18 @@ openfish -o json markets list --limit 3
 openfish -o json clob book TOKEN_ID
 ```
 
-To trade, configure a wallet and approvals:
+To trade, configure a wallet, register the wallet with Openfish, then deposit
+FISH into the agent account:
 
 ```bash
 openfish setup
 
 # Or run the steps manually
 openfish wallet create
-openfish approve set
+openfish clob create-api-key --agent-env-file .env.agent
+openfish clob account-status
+openfish bridge deposit $(openfish wallet address)
+openfish clob balance --asset-type collateral
 ```
 
 ## Configuration
@@ -159,15 +162,15 @@ Config file:
 ```json
 {
   "private_key": "0x...",
-  "chain_id": 137,
-  "signature_type": "proxy"
+  "chain_id": 56,
+  "signature_type": "eoa"
 }
 ```
 
 ### Signature Types
 
-- `proxy` (default): uses the Openfish proxy wallet flow
-- `eoa`: signs directly with the configured key
+- `eoa` (default): signs directly with the configured key
+- `proxy`: legacy proxy wallet flow
 - `gnosis-safe`: signs for multisig wallet use
 
 Override per command with `--signature-type eoa` or set
@@ -187,7 +190,7 @@ Wallet configuration is required for:
 - placing and canceling CLOB orders
 - checking authenticated balances, orders, trades, and account status
 - CTF split/merge/redeem operations
-- approvals and bridge withdrawals
+- bridge deposits and withdrawals
 - API key management
 
 ## Output Formats

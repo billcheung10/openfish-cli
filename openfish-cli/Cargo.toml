@@ -1,6 +1,6 @@
 [package]
 name = "openfish-cli"
-version = "0.1.4"
+version = "0.1.10"
 edition = "2024"
 rust-version = "1.88.0"
 description = "CLI for Openfish — browse markets, trade, and manage positions"

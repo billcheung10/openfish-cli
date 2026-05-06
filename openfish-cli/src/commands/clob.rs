@@ -14,9 +14,10 @@ use crate::output::clob::{
     print_rewards, print_server_time, print_simplified_markets, print_spread, print_spreads,
     print_tick_size, print_trades, print_user_earnings_markets,
 };
-use anyhow::Result;
+use anyhow::{Result, anyhow};
 use chrono::NaiveDate;
 use clap::{Args, Subcommand};
+use openfish_client_sdk::DEFAULT_CHAIN_ID;
 use openfish_client_sdk::auth::ExposeSecret as _;
 use openfish_client_sdk::clob;
 use openfish_client_sdk::clob::types::{
@@ -27,6 +28,7 @@ use openfish_client_sdk::clob::types::{
         PriceHistoryRequest, PriceRequest, SpreadRequest, TradesRequest, UserRewardsEarningRequest,
     },
 };
+use openfish_client_sdk::error::{Error, Kind as ErrorKind};
 use openfish_client_sdk::types::{B256, Decimal, U256};
 
 #[derive(Args)]
@@ -972,9 +974,13 @@ pub async fn execute(
             let result = if let Some(code) = invitation_code.as_deref().filter(|s| !s.is_empty()) {
                 unauth
                     .create_api_key_with_invitation(&signer, None, code)
-                    .await?
+                    .await
+                    .map_err(explain_api_key_auth_error)?
             } else {
-                unauth.create_or_derive_api_key(&signer, None).await?
+                unauth
+                    .create_or_derive_api_key(&signer, None)
+                    .await
+                    .map_err(explain_api_key_auth_error)?
             };
             if let Some(path) = agent_env_file.as_deref() {
                 write_agent_env_file(path, &signer, &result)?;
@@ -1041,6 +1047,18 @@ fn write_agent_env_file(
     }
     eprintln!("Agent credentials written to {}", path.display());
     Ok(())
+}
+
+fn explain_api_key_auth_error(err: Error) -> anyhow::Error {
+    if err.kind() == ErrorKind::Status {
+        let text = err.to_string();
+        if text.contains("address mismatch") {
+            return anyhow!(
+                "{text}\n\nThe server could not recover the claimed wallet address from the L1 auth signature. This usually means the CLI and CLOB server are using different EIP-712 chain IDs. Current Openfish CLI signs on BSC chain_id={DEFAULT_CHAIN_ID}; verify the server CHAIN_ID is also {DEFAULT_CHAIN_ID} and restart the CLOB service after changing deployment env."
+            );
+        }
+    }
+    err.into()
 }
 
 #[cfg(test)]

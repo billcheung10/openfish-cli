@@ -402,7 +402,10 @@ pub mod builder {
 fn to_message(request: &Request, timestamp: Timestamp) -> String {
     let method = request.method();
     let body = request.body().and_then(body_to_string).unwrap_or_default();
-    let path = request.url().path();
+    let path = match request.url().query() {
+        Some(query) => format!("{}?{query}", request.url().path()),
+        None => request.url().path().to_owned(),
+    };
 
     format!("{timestamp}{method}{path}{body}")
 }
@@ -583,6 +586,25 @@ mod tests {
 
         assert_eq!(message, r#"1000000test-sign/orders{"hash":"0x123"}"#);
         assert_eq!(signature, "4gJVbox-R6XlDK4nlaicig0_ANVL1qdcahiL8CXfXLM=");
+
+        Ok(())
+    }
+
+    #[test]
+    fn hmac_includes_query_string() -> Result<()> {
+        let request = Request::new(
+            Method::GET,
+            Url::parse("http://localhost/agent/account/state?signature_type=0")?,
+        );
+
+        let message = to_message(&request, 1_000_000);
+        let signature = hmac(
+            &SecretString::from("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=".to_owned()),
+            &message,
+        )?;
+
+        assert_eq!(message, "1000000GET/agent/account/state?signature_type=0");
+        assert_eq!(signature, "T_Q_t1AjKo5-zjeYyv1clF9B3c5lwe83iFiMyP_QbqA=");
 
         Ok(())
     }
