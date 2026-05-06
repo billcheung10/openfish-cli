@@ -58,8 +58,8 @@ pub(crate) type Timestamp = i64;
 
 static CONFIG: phf::Map<ChainId, ContractConfig> = phf_map! {
     137_u64 => ContractConfig {
-        exchange: address!("0x63C7C60FB5A4358F216fb45D08D0B9a0a1dDFe74"),
-        collateral: address!("0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"),
+        exchange: address!("0xA642f9165D192Ff13b1D43a0Ef56B3BD074614bB"),
+        collateral: address!("0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"),
         conditional_tokens: address!("0x4D97DCd97eC945f40cF65F87097ACe5EA0476045"),
         neg_risk_adapter: None,
     },
@@ -73,10 +73,10 @@ static CONFIG: phf::Map<ChainId, ContractConfig> = phf_map! {
 
 static NEG_RISK_CONFIG: phf::Map<ChainId, ContractConfig> = phf_map! {
     137_u64 => ContractConfig {
-        exchange: address!("0xB03b9eABdF6e61E214643AE4dc12a320A27024bA"),
-        collateral: address!("0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"),
+        exchange: address!("0x700eaF3f3FEb1D3f2aE67000e1A4FA41a6E35DF1"),
+        collateral: address!("0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"),
         conditional_tokens: address!("0x4D97DCd97eC945f40cF65F87097ACe5EA0476045"),
-        neg_risk_adapter: Some(address!("0x39068AF46CfAafC0B208604185fD845eB4a10bAe")),
+        neg_risk_adapter: Some(address!("0x0d8FA66CFe5D5EF96D6be9C4e808BD4279527d6e")),
     },
     80002_u64 => ContractConfig {
         exchange: address!("0xd91E80cF2E7be2e162c6513ceD06f1dD0dA35296"),
@@ -321,6 +321,36 @@ mod tests {
         assert_eq!(
             cfg.exchange,
             address!("0xd91e80cf2e7be2e162c6513ced06f1dd0da35296")
+        );
+    }
+
+    #[test]
+    fn config_contains_polygon_openfish_contracts() {
+        let cfg = contract_config(POLYGON, false).expect("missing config");
+        assert_eq!(
+            cfg.exchange,
+            address!("0xA642f9165D192Ff13b1D43a0Ef56B3BD074614bB")
+        );
+        assert_eq!(
+            cfg.collateral,
+            address!("0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174")
+        );
+        assert_eq!(
+            cfg.conditional_tokens,
+            address!("0x4D97DCd97eC945f40cF65F87097ACe5EA0476045")
+        );
+    }
+
+    #[test]
+    fn config_contains_polygon_openfish_neg_risk_contracts() {
+        let cfg = contract_config(POLYGON, true).expect("missing config");
+        assert_eq!(
+            cfg.exchange,
+            address!("0x700eaF3f3FEb1D3f2aE67000e1A4FA41a6E35DF1")
+        );
+        assert_eq!(
+            cfg.neg_risk_adapter,
+            Some(address!("0x0d8FA66CFe5D5EF96D6be9C4e808BD4279527d6e"))
         );
     }
 

@@ -18,7 +18,7 @@ pub struct ApprovalStatus {
 struct ApprovalRow {
     #[tabled(rename = "Contract")]
     contract: String,
-    #[tabled(rename = "USDC")]
+    #[tabled(rename = "USDC.e")]
     usdc: String,
     #[tabled(rename = "CTF Tokens")]
     ctf: String,
@@ -32,7 +32,7 @@ fn format_allowance(allowance: U256) -> String {
     } else {
         let usdc_decimals = U256::from(1_000_000);
         let whole = allowance / usdc_decimals;
-        format!("\u{2713} {whole} USDC")
+        format!("\u{2713} {whole} USDC.e")
     }
 }
 

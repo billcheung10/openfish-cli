@@ -1,4 +1,4 @@
-pub(crate) const USDC_ADDRESS_STR: &str = "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359";
+pub(crate) const USDC_ADDRESS_STR: &str = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174";
 pub(crate) const USDC_DECIMALS: u32 = 6;
 
 pub(crate) mod approve;
