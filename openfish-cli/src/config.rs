@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 const ENV_VAR: &str = "OPENFISH_PRIVATE_KEY";
 const SIG_TYPE_ENV_VAR: &str = "OPENFISH_SIGNATURE_TYPE";
-pub(crate) const DEFAULT_SIGNATURE_TYPE: &str = "proxy";
+pub(crate) const DEFAULT_SIGNATURE_TYPE: &str = "eoa";
 
 pub(crate) const NO_WALLET_MSG: &str =
     "No wallet configured. Run `openfish wallet create` or `openfish wallet import <key>`";
@@ -78,7 +78,7 @@ pub fn load_config() -> Result<Option<Config>> {
     Ok(Some(config))
 }
 
-/// Priority: CLI flag > env var > config file > default ("proxy").
+/// Priority: CLI flag > env var > config file > default ("eoa").
 pub fn resolve_signature_type(cli_flag: Option<&str>) -> Result<String> {
     if let Some(st) = cli_flag {
         return Ok(st.to_string());

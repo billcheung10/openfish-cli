@@ -5,11 +5,11 @@ use anyhow::{Context, Result};
 use openfish_client_sdk::auth::state::Authenticated;
 use openfish_client_sdk::auth::{LocalSigner, Normal, Signer as _};
 use openfish_client_sdk::clob::types::SignatureType;
-use openfish_client_sdk::{POLYGON, clob};
+use openfish_client_sdk::{DEFAULT_CHAIN_ID, clob};
 
 use crate::config;
 
-const DEFAULT_RPC_URL: &str = "https://polygon.drpc.org";
+const DEFAULT_RPC_URL: &str = "https://bsc-dataseed.binance.org";
 
 fn rpc_url() -> String {
     std::env::var("OPENFISH_RPC_URL").unwrap_or_else(|_| DEFAULT_RPC_URL.to_string())
@@ -17,7 +17,7 @@ fn rpc_url() -> String {
 
 fn parse_signature_type(s: &str) -> SignatureType {
     match s {
-        config::DEFAULT_SIGNATURE_TYPE => SignatureType::Proxy,
+        "proxy" => SignatureType::Proxy,
         "gnosis-safe" => SignatureType::GnosisSafe,
         _ => SignatureType::Eoa,
     }
@@ -28,7 +28,7 @@ pub fn resolve_signer(private_key: Option<&str>) -> Result<impl openfish_client_
     let key = key.ok_or_else(|| anyhow::anyhow!("{}", config::NO_WALLET_MSG))?;
     LocalSigner::from_str(&key)
         .context("Invalid private key")
-        .map(|s| s.with_chain_id(Some(POLYGON)))
+        .map(|s| s.with_chain_id(Some(DEFAULT_CHAIN_ID)))
 }
 
 pub async fn authenticated_clob_client(
@@ -61,7 +61,7 @@ pub async fn create_readonly_provider() -> Result<impl alloy::providers::Provide
     ProviderBuilder::new()
         .connect(&rpc_url())
         .await
-        .context("Failed to connect to Polygon RPC")
+        .context("Failed to connect to BSC RPC")
 }
 
 pub async fn create_provider(
@@ -71,12 +71,12 @@ pub async fn create_provider(
     let key = key.ok_or_else(|| anyhow::anyhow!("{}", config::NO_WALLET_MSG))?;
     let signer = LocalSigner::from_str(&key)
         .context("Invalid private key")?
-        .with_chain_id(Some(POLYGON));
+        .with_chain_id(Some(DEFAULT_CHAIN_ID));
     ProviderBuilder::new()
         .wallet(signer)
         .connect(&rpc_url())
         .await
-        .context("Failed to connect to Polygon RPC with wallet")
+        .context("Failed to connect to BSC RPC with wallet")
 }
 
 #[cfg(test)]

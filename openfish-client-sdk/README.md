@@ -147,21 +147,22 @@ async fn main() -> anyhow::Result<()> {
 Set `OPENFISH_PRIVATE_KEY` as an environment variable with your private key.
 
 ##### [EOA](https://www.binance.com/en/academy/glossary/externally-owned-account-eoa) wallets
-If using MetaMask or hardware wallet, you must first set token allowances. See [Token Allowances](#token-allowances) section below.
+EOA is the default mode for the current BSC FISH ledger deployment. Deposit FISH through the Bridge
+before placing orders; on-chain allowances are not required for ledger trading.
 
 ```rust,ignore
 use std::str::FromStr as _;
 
 use alloy::signers::Signer as _;
 use alloy::signers::local::LocalSigner;
-use openfish_client_sdk::{POLYGON, PRIVATE_KEY_VAR};
+use openfish_client_sdk::{BSC, PRIVATE_KEY_VAR};
 use openfish_client_sdk::clob::{Client, Config};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let private_key = std::env::var(PRIVATE_KEY_VAR).expect("Need a private key");
-    let signer = LocalSigner::from_str(&private_key)?.with_chain_id(Some(POLYGON));
-    let client = Client::new("https://clob.openfish.com", Config::default())?
+    let signer = LocalSigner::from_str(&private_key)?.with_chain_id(Some(BSC));
+    let client = Client::new("https://api.openfish.me", Config::default())?
         .authentication_builder(&signer)
         .authenticate()
         .await?;
@@ -177,10 +178,10 @@ async fn main() -> anyhow::Result<()> {
 ```
 
 ##### Proxy/Safe wallets
-For proxy/Safe wallets, the funder address is **automatically derived** using CREATE2 from your signer's EOA address:
+Proxy/Safe wallets are legacy/advanced modes. For those modes, the funder address is **automatically derived** using CREATE2 from your signer's EOA address:
 
 ```rust,ignore
-let client = Client::new("https://clob.openfish.com", Config::default())?
+let client = Client::new("https://api.openfish.me", Config::default())?
     .authentication_builder(&signer)
     .signature_type(SignatureType::GnosisSafe)  // Funder auto-derived via CREATE2
     .authenticate()
@@ -193,7 +194,7 @@ shown on openfish.com when you log in with a browser wallet.
 If you need to override the derived address (e.g., for advanced use cases), you can explicitly provide it:
 
 ```rust,ignore
-let client = Client::new("https://clob.openfish.com", Config::default())?
+let client = Client::new("https://api.openfish.me", Config::default())?
     .authentication_builder(&signer)
     .funder(address!("<your-openfish-wallet-address>"))
     .signature_type(SignatureType::GnosisSafe)

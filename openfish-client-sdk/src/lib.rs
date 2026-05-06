@@ -45,7 +45,19 @@ use crate::types::{Address, address};
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// [`ChainId`] for Polygon mainnet
+/// [`ChainId`] for BSC mainnet used by the current Openfish FISH deployment.
+pub const BSC: ChainId = 56;
+
+/// Default Openfish chain for wallet authentication and order signing.
+pub const DEFAULT_CHAIN_ID: ChainId = BSC;
+
+/// BSC FISH token used by the current Openfish Bridge and off-chain ledger.
+pub const FISH_TOKEN: Address = address!("0xaE71fd8baCc2f17C43a01C3F4aFF6dEEbc194444");
+
+/// Off-chain order-signing domain contract configured by the Openfish CLOB service.
+pub const OFFCHAIN_ORDER_EXCHANGE: Address = address!("0x63C7C60FB5A4358F216fb45D08D0B9a0a1dDFe74");
+
+/// [`ChainId`] for Polygon mainnet legacy CTF compatibility.
 pub const POLYGON: ChainId = 137;
 
 /// [`ChainId`] for Polygon testnet <https://polygon.technology/blog/introducing-the-amoy-testnet-for-polygon-pos>
@@ -57,9 +69,15 @@ pub const PRIVATE_KEY_VAR: &str = "OPENFISH_PRIVATE_KEY";
 pub(crate) type Timestamp = i64;
 
 static CONFIG: phf::Map<ChainId, ContractConfig> = phf_map! {
+    56_u64 => ContractConfig {
+        exchange: OFFCHAIN_ORDER_EXCHANGE,
+        collateral: FISH_TOKEN,
+        conditional_tokens: Address::ZERO,
+        neg_risk_adapter: None,
+    },
     137_u64 => ContractConfig {
-        exchange: address!("0xA642f9165D192Ff13b1D43a0Ef56B3BD074614bB"),
-        collateral: address!("0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"),
+        exchange: address!("0x63C7C60FB5A4358F216fb45D08D0B9a0a1dDFe74"),
+        collateral: address!("0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"),
         conditional_tokens: address!("0x4D97DCd97eC945f40cF65F87097ACe5EA0476045"),
         neg_risk_adapter: None,
     },
@@ -72,11 +90,17 @@ static CONFIG: phf::Map<ChainId, ContractConfig> = phf_map! {
 };
 
 static NEG_RISK_CONFIG: phf::Map<ChainId, ContractConfig> = phf_map! {
+    56_u64 => ContractConfig {
+        exchange: OFFCHAIN_ORDER_EXCHANGE,
+        collateral: FISH_TOKEN,
+        conditional_tokens: Address::ZERO,
+        neg_risk_adapter: None,
+    },
     137_u64 => ContractConfig {
-        exchange: address!("0x700eaF3f3FEb1D3f2aE67000e1A4FA41a6E35DF1"),
-        collateral: address!("0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"),
+        exchange: address!("0xB03b9eABdF6e61E214643AE4dc12a320A27024bA"),
+        collateral: address!("0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"),
         conditional_tokens: address!("0x4D97DCd97eC945f40cF65F87097ACe5EA0476045"),
-        neg_risk_adapter: Some(address!("0x0d8FA66CFe5D5EF96D6be9C4e808BD4279527d6e")),
+        neg_risk_adapter: Some(address!("0x39068AF46CfAafC0B208604185fD845eB4a10bAe")),
     },
     80002_u64 => ContractConfig {
         exchange: address!("0xd91E80cF2E7be2e162c6513ceD06f1dD0dA35296"),
@@ -325,33 +349,21 @@ mod tests {
     }
 
     #[test]
-    fn config_contains_polygon_openfish_contracts() {
-        let cfg = contract_config(POLYGON, false).expect("missing config");
-        assert_eq!(
-            cfg.exchange,
-            address!("0xA642f9165D192Ff13b1D43a0Ef56B3BD074614bB")
-        );
-        assert_eq!(
-            cfg.collateral,
-            address!("0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174")
-        );
-        assert_eq!(
-            cfg.conditional_tokens,
-            address!("0x4D97DCd97eC945f40cF65F87097ACe5EA0476045")
-        );
+    fn config_contains_bsc_fish_ledger_contracts() {
+        let cfg = contract_config(BSC, false).expect("missing config");
+        assert_eq!(cfg.exchange, OFFCHAIN_ORDER_EXCHANGE);
+        assert_eq!(cfg.collateral, FISH_TOKEN);
+        assert_eq!(cfg.conditional_tokens, Address::ZERO);
+        assert_eq!(cfg.neg_risk_adapter, None);
     }
 
     #[test]
-    fn config_contains_polygon_openfish_neg_risk_contracts() {
-        let cfg = contract_config(POLYGON, true).expect("missing config");
-        assert_eq!(
-            cfg.exchange,
-            address!("0x700eaF3f3FEb1D3f2aE67000e1A4FA41a6E35DF1")
-        );
-        assert_eq!(
-            cfg.neg_risk_adapter,
-            Some(address!("0x0d8FA66CFe5D5EF96D6be9C4e808BD4279527d6e"))
-        );
+    fn config_contains_bsc_neg_risk_ledger_contracts() {
+        let cfg = contract_config(BSC, true).expect("missing config");
+        assert_eq!(cfg.exchange, OFFCHAIN_ORDER_EXCHANGE);
+        assert_eq!(cfg.collateral, FISH_TOKEN);
+        assert_eq!(cfg.conditional_tokens, Address::ZERO);
+        assert_eq!(cfg.neg_risk_adapter, None);
     }
 
     #[test]

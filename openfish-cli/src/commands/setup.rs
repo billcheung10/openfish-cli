@@ -2,9 +2,9 @@ use std::io::{self, BufRead, Write};
 use std::str::FromStr;
 
 use anyhow::{Context, Result};
+use openfish_client_sdk::DEFAULT_CHAIN_ID;
 use openfish_client_sdk::auth::{LocalSigner, Signer as _};
 use openfish_client_sdk::types::Address;
-use openfish_client_sdk::{POLYGON, derive_proxy_wallet};
 
 use crate::config;
 
@@ -103,17 +103,17 @@ fn setup_wallet() -> Result<Address> {
         let key = prompt("  Enter private key: ")?;
         let signer = LocalSigner::from_str(&key)
             .context("Invalid private key")?
-            .with_chain_id(Some(POLYGON));
+            .with_chain_id(Some(DEFAULT_CHAIN_ID));
         let hex = format!("{:#x}", signer.to_bytes());
         (signer.address(), hex)
     } else {
-        let signer = LocalSigner::random().with_chain_id(Some(POLYGON));
+        let signer = LocalSigner::random().with_chain_id(Some(DEFAULT_CHAIN_ID));
         let address = signer.address();
         let hex = format!("{:#x}", signer.to_bytes());
         (address, hex)
     };
 
-    config::save_wallet(&key_hex, POLYGON, config::DEFAULT_SIGNATURE_TYPE)?;
+    config::save_wallet(&key_hex, DEFAULT_CHAIN_ID, config::DEFAULT_SIGNATURE_TYPE)?;
 
     if has_key {
         println!("  ✓ Wallet imported");
@@ -135,36 +135,27 @@ fn setup_wallet() -> Result<Address> {
 fn finish_setup(address: Address) -> Result<()> {
     let total = 4;
 
-    step_header(2, total, "Proxy Wallet");
+    step_header(2, total, "Openfish Wallet");
 
-    let proxy = derive_proxy_wallet(address, POLYGON);
-    match proxy {
-        Some(proxy) => {
-            println!("  ✓ Proxy wallet derived");
-            println!("    Proxy: {proxy}");
-            println!("    Deposit FISH to this address to start trading.");
-        }
-        None => {
-            println!("  ✗ Could not derive proxy wallet");
-            println!("    You may need to use --signature-type eoa");
-        }
-    }
+    println!("  ✓ Wallet ready for Openfish API authentication");
+    println!("    Address: {address}");
+    println!("    Chain:   BSC (56)");
+    println!("    Mode:    EOA signatures");
 
     println!();
 
     step_header(3, total, "Fund Wallet");
 
-    let deposit_addr = proxy.unwrap_or(address);
-    println!("  ○ Deposit FISH to your wallet to start trading");
-    println!("    Run: openfish bridge deposit {deposit_addr}");
-    println!("    Or transfer FISH on the supported Openfish chain");
+    println!("  ○ Bridge FISH from BSC into your Openfish ledger");
+    println!("    Run: openfish bridge deposit {address}");
+    println!("    Send only FISH on BSC to the returned deposit address.");
 
     println!();
 
-    step_header(4, total, "Approve Contracts");
+    step_header(4, total, "Trading Readiness");
 
-    println!("  Run `openfish approve set` to approve contracts for trading.");
-    println!("  Or `openfish approve check` to see current approval status.");
+    println!("  No on-chain approvals are required for current FISH ledger trading.");
+    println!("  After funding, run `openfish clob balance --asset-type collateral`.");
 
     println!();
     println!("  ────────────────────────────────────");

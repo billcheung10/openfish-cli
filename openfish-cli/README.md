@@ -120,7 +120,8 @@ To trade, set up a wallet:
 openfish setup
 # Or manually:
 openfish wallet create
-openfish approve set
+openfish bridge deposit 0xYOUR_WALLET_ADDRESS
+openfish clob balance --asset-type collateral
 ```
 
 ## Configuration
@@ -149,15 +150,15 @@ The config file (`~/.config/openfish/config.json`):
 ```json
 {
   "private_key": "0x...",
-  "chain_id": 137,
-  "signature_type": "proxy"
+  "chain_id": 56,
+  "signature_type": "eoa"
 }
 ```
 
 ### Signature Types
 
-- `proxy` (default) — uses Openfish's proxy wallet system
-- `eoa` — signs directly with your key
+- `eoa` (default) — signs directly with your key
+- `proxy` — legacy proxy wallet mode
 - `gnosis-safe` — for multisig wallets
 
 Override per-command with `--signature-type eoa` or via `OPENFISH_SIGNATURE_TYPE`.
@@ -168,7 +169,7 @@ Most commands work without a wallet — browsing markets, viewing order books, c
 
 - Placing and canceling orders (`clob create-order`, `clob market-order`, `clob cancel-*`)
 - Checking your balances and trades (`clob balance`, `clob trades`, `clob orders`)
-- On-chain operations (`approve set`, `ctf split/merge/redeem`)
+- Bridge and legacy on-chain operations (`bridge withdraw`, `ctf split/merge/redeem`)
 - Reward and API key management (`clob rewards`, `clob create-api-key`)
 
 ## Output Formats
@@ -404,14 +405,15 @@ openfish data builder-volume --period month
 
 ### Contract Approvals
 
-Before trading, Openfish contracts need ERC-20 (USDC) and ERC-1155 (CTF token) approvals.
+Current Openfish trading uses BSC FISH deposits into an off-chain CLOB ledger. On-chain approvals
+are not required to trade. The `approve` command remains for compatibility and reports this status.
 
 ```bash
-# Check current approvals (read-only)
+# Check approval status (read-only)
 openfish approve check
 openfish approve check 0xSOME_ADDRESS
 
-# Approve all contracts (sends 6 on-chain transactions, needs POL for gas)
+# Compatibility no-op for the current FISH ledger deployment
 openfish approve set
 ```
 
@@ -518,7 +520,7 @@ openfish clob price-history 48331043336612883... --interval 1d
 
 ```bash
 openfish wallet create
-openfish approve set                    # needs POL for gas
+openfish bridge deposit 0xYOUR_ADDRESS  # send only FISH on BSC to returned address
 openfish clob balance --asset-type collateral
 openfish clob market-order --token TOKEN_ID --side buy --amount 5
 ```

@@ -57,7 +57,7 @@ use crate::clob::types::{SignableOrder, SignatureType, SignedOrder, TickSize};
 use crate::error::{Error, Kind as ErrorKind, Synchronization};
 use crate::types::Address;
 use crate::{
-    AMOY, POLYGON, Result, Timestamp, ToQueryParams as _, auth, contract_config,
+    AMOY, BSC, POLYGON, Result, Timestamp, ToQueryParams as _, auth, contract_config,
     derive_proxy_wallet, derive_safe_wallet,
 };
 
@@ -128,10 +128,10 @@ impl<S: Signer, K: Kind> AuthenticationBuilder<'_, S, K> {
         let inner = Arc::into_inner(self.client.inner).ok_or(Synchronization)?;
 
         let chain_id = match self.signer.chain_id() {
-            Some(chain) if chain == POLYGON || chain == AMOY => chain,
+            Some(chain) if chain == BSC || chain == POLYGON || chain == AMOY => chain,
             Some(chain) => {
                 return Err(Error::validation(format!(
-                    "Only Polygon and AMOY are supported, got {chain}"
+                    "Only BSC, Polygon, and AMOY are supported, got {chain}"
                 )));
             }
             None => {
@@ -353,7 +353,7 @@ impl Drop for DroppingCancellationToken {
 
 impl Default for Client<Unauthenticated> {
     fn default() -> Self {
-        Client::new("https://clob.openfish.com", Config::default())
+        Client::new("https://api.openfish.me", Config::default())
             .expect("Client with default endpoint should succeed")
     }
 }
@@ -387,7 +387,7 @@ impl Default for Config {
 }
 
 /// The default geoblock API host (separate from CLOB host)
-const DEFAULT_GEOBLOCK_HOST: &str = "https://openfish.com";
+const DEFAULT_GEOBLOCK_HOST: &str = "https://openfish.me";
 
 #[derive(Debug)]
 struct ClientInner<S: State> {
