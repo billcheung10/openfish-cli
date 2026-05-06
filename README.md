@@ -24,7 +24,7 @@ Release binaries are published for:
 - Windows x86_64: `x86_64-pc-windows-msvc`
 
 The initial `v0.1.4` release does not include Windows binaries. Windows release
-artifacts start with `v0.1.5` or later.
+artifacts start with the first successful release after `v0.1.4`.
 
 ### Build from source
 
@@ -57,8 +57,8 @@ brew install openfish
 ### Windows
 
 Native Windows binaries are published as `.zip` archives on GitHub Releases
-starting with `v0.1.5` or later. Until then, Windows users should use WSL or
-build from source:
+starting with the first successful release after `v0.1.4`. Until then, Windows
+users should use WSL or build from source:
 
 ```powershell
 git clone https://github.com/billcheung10/openfish-cli
