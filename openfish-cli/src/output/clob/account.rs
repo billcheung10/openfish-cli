@@ -58,8 +58,7 @@ pub fn print_balance(
     is_collateral: bool,
     output: &OutputFormat,
 ) -> anyhow::Result<()> {
-    let divisor = Decimal::from(10u64.pow(crate::commands::USDC_DECIMALS));
-    let human_balance = result.balance / divisor;
+    let human_balance = balance_display_value(result);
     match output {
         OutputFormat::Table => {
             if is_collateral {
@@ -88,6 +87,10 @@ pub fn print_balance(
         }
     }
     Ok(())
+}
+
+fn balance_display_value(result: &BalanceAllowanceResponse) -> Decimal {
+    result.balance
 }
 
 pub fn print_notifications(
@@ -161,6 +164,23 @@ pub fn print_notifications(
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use openfish_client_sdk::clob::types::response::BalanceAllowanceResponse;
+    use rust_decimal_macros::dec;
+
+    use super::balance_display_value;
+
+    #[test]
+    fn balance_display_uses_openfish_human_units() {
+        let response = BalanceAllowanceResponse::builder()
+            .balance(dec!(100000))
+            .build();
+
+        assert_eq!(balance_display_value(&response), dec!(100000));
+    }
 }
 
 pub fn print_rewards(
