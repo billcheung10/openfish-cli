@@ -68,8 +68,8 @@ pub fn print_balance(
             }
             if !result.allowances.is_empty() {
                 println!("Allowances:");
-                for (addr, allowance) in &result.allowances {
-                    println!("  {}: {allowance}", truncate(&addr.to_string(), 14));
+                for (key, allowance) in &result.allowances {
+                    println!("  {}: {allowance}", truncate(key, 14));
                 }
             }
         }
@@ -77,7 +77,7 @@ pub fn print_balance(
             let allowances: serde_json::Map<String, serde_json::Value> = result
                 .allowances
                 .iter()
-                .map(|(addr, val)| (addr.to_string(), json!(val)))
+                .map(|(key, val)| (key.clone(), json!(val)))
                 .collect();
             let data = json!({
                 "balance": human_balance.to_string(),

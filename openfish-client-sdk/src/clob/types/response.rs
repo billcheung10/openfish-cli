@@ -446,7 +446,7 @@ pub struct BalanceAllowanceResponse {
     pub balance: Decimal,
     #[serde(default)]
     #[builder(default)]
-    pub allowances: HashMap<Address, String>,
+    pub allowances: HashMap<String, String>,
 }
 
 #[non_exhaustive]
@@ -807,4 +807,32 @@ pub struct RfqQuote {
     pub size_out: Decimal,
     /// Quoted price.
     pub price: Decimal,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::BalanceAllowanceResponse;
+
+    #[test]
+    fn balance_allowance_accepts_non_address_allowance_keys() {
+        let value = serde_json::json!({
+            "balance": "100000",
+            "allowances": {
+                "111125429791772883888688185235312648705384059278665134857471528343082094918410": "42"
+            }
+        });
+
+        let response: BalanceAllowanceResponse = serde_json::from_value(value).unwrap();
+
+        assert_eq!(response.balance.to_string(), "100000");
+        assert_eq!(
+            response
+                .allowances
+                .get(
+                    "111125429791772883888688185235312648705384059278665134857471528343082094918410"
+                )
+                .map(String::as_str),
+            Some("42"),
+        );
+    }
 }

@@ -111,7 +111,7 @@ pub enum QuestionsCommand {
         resolution_evidence: Option<String>,
     },
 
-    /// Get related markets via lattice edges
+    /// Get related markets
     Related {
         /// Condition ID (0x-prefixed)
         condition_id: String,
@@ -119,6 +119,10 @@ pub enum QuestionsCommand {
         /// Edge type filter (e.g. CONDITION_VARIANT)
         #[arg(long)]
         edge_type: Option<String>,
+
+        /// Maximum related markets to return
+        #[arg(long)]
+        limit: Option<i64>,
     },
 
     /// Get fee breakdown for a market
@@ -195,10 +199,12 @@ pub async fn execute(
         QuestionsCommand::Related {
             condition_id,
             edge_type,
+            limit,
         } => {
             let client = unauthenticated_client()?;
             let req = RelatedMarketsRequest::builder()
                 .maybe_edge_type(edge_type)
+                .maybe_limit(limit)
                 .build();
             let response = client.related_markets(&condition_id, &req).await?;
             print_related_markets(&response, output)?;

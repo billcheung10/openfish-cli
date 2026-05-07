@@ -186,6 +186,7 @@ pub struct ResolveQuestionResponse {
 #[builder(on(String, into))]
 pub struct RelatedMarketsRequest {
     pub edge_type: Option<String>,
+    pub limit: Option<i64>,
 }
 
 #[non_exhaustive]
@@ -203,10 +204,34 @@ pub struct LatticeEdge {
 #[non_exhaustive]
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct RelatedMarket {
+    pub condition_id: String,
+    pub question_text: Option<String>,
+    pub status: String,
+    pub active: bool,
+    pub closed: bool,
+    pub volume_num: Option<Decimal>,
+    pub created_at: DateTime<Utc>,
+    pub cluster_id: Option<Uuid>,
+    pub cluster_slug: Option<String>,
+    pub cluster_title: Option<String>,
+    pub template_slug: Option<String>,
+    pub template_title: Option<String>,
+    pub data: serde_json::Value,
+}
+
+#[non_exhaustive]
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct RelatedMarketsResponse {
     pub condition_id: String,
+    pub source: Option<String>,
+    #[serde(default)]
     pub edges: Vec<LatticeEdge>,
+    #[serde(default)]
+    pub markets: Vec<RelatedMarket>,
     pub count: i64,
+    pub limit: Option<i64>,
 }
 
 // ─── Market Fees ───
